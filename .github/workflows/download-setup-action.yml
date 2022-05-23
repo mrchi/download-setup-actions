@@ -23,7 +23,7 @@ jobs:
           mkdir -p "${{ runner.tool_cache }}"
 
       - name: Run ${{ github.event.inputs.action-name }}
-        uses: ${{ github.event.inputs.action-name }}
+        uses: "${{ github.event.inputs.action-name }}"
         with: ${{ fromJSON(github.event.inputs.action-with) }}
 
       - name: Archive tool cache
