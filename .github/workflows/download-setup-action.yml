@@ -1,16 +1,7 @@
 name: Download setup action
 
 on:
-  workflow_dispatch:
-    inputs:
-      action-name:
-        description: 'The action name downloaded, such as "actions/setup-python@v3"'
-        required: true
-        type: string
-      action-with:
-        description: 'The action inputs, the JSON body forkey "with" of step'
-        required: true
-        type: string
+  push:
 
 jobs:
   download-setup-action:
@@ -22,9 +13,10 @@ jobs:
           mv "${{ runner.tool_cache }}" "${{ runner.tool_cache }}.old"
           mkdir -p "${{ runner.tool_cache }}"
 
-      - name: Run ${{ github.event.inputs.action-name }}
-        uses: "${{ github.event.inputs.action-name }}"
-        with: ${{ fromJSON(github.event.inputs.action-with) }}
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
       - name: Archive tool cache
         run: |
