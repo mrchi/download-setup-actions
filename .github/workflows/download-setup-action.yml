@@ -1,0 +1,37 @@
+name: Download setup action
+
+on:
+  workflow_dispatch:
+    inputs:
+      action-name:
+        description: 'The action name downloaded, such as "actions/setup-python@v3"'
+        required: true
+        type: string
+      action-with:
+        description: 'The action inputs, the JSON body forkey "with" of step'
+        required: true
+        type: string
+
+jobs:
+  download-setup-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clear any existing tool cache
+        run: |
+          mv "${{ runner.tool_cache }}" "${{ runner.tool_cache }}.old"
+          mkdir -p "${{ runner.tool_cache }}"
+
+      - name: Run ${{ github.event.inputs.action-name }}
+        uses: ${{ github.event.inputs.action-name }}
+        with: ${{ fromJSON(github.event.inputs.action-with) }}
+
+      - name: Archive tool cache
+        run: |
+          cd "${{ runner.tool_cache }}"
+          tar -czf tool_cache.tar.gz *
+
+      - name: Upload tool cache artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{runner.tool_cache}}/tool_cache.tar.gz
